@@ -15,7 +15,7 @@ type Config struct {
 func Load() (*Config, error) {
 	_ = godotenv.Load()
 	return &Config{
-		DBHost:     getEnv("DB_HOST", "localhost"),
+		DBHost:     getEnv("DB_HOST", "db"),
 		DBPort:     getEnv("DB_PORT", "5432"),
 		DBUser:     getEnv("DB_USER", "postgres_user"),
 		DBPassword: getEnv("DB_PASSWORD", "postgres_password"),

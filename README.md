@@ -16,7 +16,7 @@ A simple REST API built with Go (Gin + PostgreSQL) to manage a product inventory
 ## Project structure
 
 ```
-go-crud-assignment/
+product-management/
 ├── main.go
 ├── .env
 ├── config/
@@ -40,7 +40,7 @@ go-crud-assignment/
 ### 1. Prerequisites
 
 - Go 1.26.4
-- PostgreSQL running locally
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
 
 ### 2. Clone and install dependencies
 
@@ -50,12 +50,13 @@ cd product-management
 go mod tidy
 ```
 
-### 3. Configure environment
+
+### 2. Configure environment
 
 Create a `.env` file at the project root:
 
 ```env
-DB_HOST=localhost
+DB_HOST=db
 DB_PORT=5432
 DB_USER=postgres_user
 DB_PASSWORD=postgres_password
@@ -63,21 +64,51 @@ DB_NAME=product_management
 PORT=8080
 ```
 
-### 4. Set up the database
+> **Note:** `DB_HOST` must be `db` (the Docker Compose service name), not `localhost`.
+
+### 3. Start all services
 
 ```bash
-psql -U postgres -c "CREATE DATABASE product_management;"
-psql -U postgres -d products_db -f migrations/001_create_products_table.sql
+docker compose up --build
 ```
 
-### 5. Run the server
+This will:
+- Start a PostgreSQL container (`product_management_db`) on port `5432`
+- Build and start the API container on port `8080`
+- The API waits for the database to pass its health check before starting
+### 4. Run database migration
+
+In a separate terminal, after the containers are up:
 
 ```bash
-go run main.go
+docker compose exec -T db psql -U postgres_user -d product_management \
+  < migrations/001_create_products_table.sql
 ```
 
-The server starts at `http://localhost:8080`.
+The server is available at `http://localhost:8080`.
 
+### Useful commands
+
+```bash
+# Run in background
+docker compose up --build -d
+```
+
+```bash
+# View logs
+docker compose logs -f api
+```
+
+```bash
+# Stop all containers
+docker compose down
+```
+
+```bash
+# Stop and remove volumes (resets the database)
+docker compose down -v
+```
+ 
 ---
 
 ## API endpoints
@@ -152,7 +183,7 @@ curl http://localhost:8080/products?keyword=keyboard
 ### Get product by ID
 
 ```bash
-curl http://localhost:8080/products/4
+curl http://localhost:8080/products/1
 ```
 
 **Response `200`:** single product object.
@@ -168,7 +199,7 @@ curl http://localhost:8080/products/4
 ### Update a product
 
 ```bash
-curl -X PUT http://localhost:8080/products/4 \
+curl -X PUT http://localhost:8080/products/1 \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Updated Keyboard",
