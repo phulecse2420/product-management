@@ -18,13 +18,15 @@ func Run(cfg *config.Config) error {
 	}
 	defer db.Close()
 
-	repo := repositories.NewProductRepository(db)
+	productRepository := repositories.NewProductRepository(db)
 
-	svc := services.NewProductService(repo)
+	productService := services.NewProductService(productRepository)
 
-	handler := handlers.NewProductHandler(svc)
+	healthHandler := handlers.NewHealthHandler()
+	productHandler := handlers.NewProductHandler(productService)
 
 	r := gin.Default()
-	routes.Register(r, handler)
+	routes.Register(r, productHandler, healthHandler)
+
 	return r.Run(":" + cfg.Port)
 }

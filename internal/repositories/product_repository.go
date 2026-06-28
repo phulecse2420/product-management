@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+	"errors"
 	"pm/internal/models"
 )
 
@@ -24,7 +25,7 @@ func (r *ProductRepository) Create(inp models.CreateProductInput) (*models.Produ
 
 func (r *ProductRepository) List(keyword string) ([]models.Product, error) {
 	q := `SELECT id,name,description,price,quantity,created_at,updated_at
-          FROM products WHERE ($1='' OR name ILIKE '%'||$1||'%') ORDER BY id`
+          FROM products WHERE ($1='' OR name ILIKE '%'||$1||'%' OR description ILIKE '%'||$1||'%') ORDER BY id`
 	rows, err := r.db.Query(q, keyword)
 	if err != nil {
 		return nil, err
@@ -44,7 +45,7 @@ func (r *ProductRepository) GetByID(id int64) (*models.Product, error) {
 	err := r.db.QueryRow(
 		`SELECT id,name,description,price,quantity,created_at,updated_at FROM products WHERE id=$1`, id,
 	).Scan(&p.ID, &p.Name, &p.Description, &p.Price, &p.Quantity, &p.CreatedAt, &p.UpdatedAt)
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}
 	return p, err
@@ -57,7 +58,7 @@ func (r *ProductRepository) Update(id int64, inp models.UpdateProductInput) (*mo
          WHERE id=$5 RETURNING id,name,description,price,quantity,created_at,updated_at`,
 		inp.Name, inp.Description, inp.Price, inp.Quantity, id,
 	).Scan(&p.ID, &p.Name, &p.Description, &p.Price, &p.Quantity, &p.CreatedAt, &p.UpdatedAt)
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return nil, nil
 	}
 	return p, err

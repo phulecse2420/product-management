@@ -9,10 +9,10 @@ import (
 func main() {
 	cfg, err := config.Load()
 	if err != nil {
-		log.Fatal("config error:", err)
+		log.Fatal("load config error:", err)
 	}
 	cfg.Log()
 	if err := app.Run(cfg); err != nil {
-		log.Fatal("server error:", err)
+		log.Fatal("run server error:", err)
 	}
 }

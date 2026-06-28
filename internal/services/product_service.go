@@ -7,11 +7,11 @@ import (
 )
 
 var (
-	ErrNotFound         = errors.New("product not found")
-	ErrNameRequired     = errors.New("name is required")
-	ErrNameTooShort     = errors.New("name must be at least 3 characters")
-	ErrPriceRequired    = errors.New("price must be greater than 0")
-	ErrQuantityNegative = errors.New("quantity must be greater than or equal to 0")
+	ErrProductNotFound         = errors.New("product not found")
+	ErrProductNameRequired     = errors.New("name is required")
+	ErrProductNameTooShort     = errors.New("name must be at least 3 characters")
+	ErrProductPriceRequired    = errors.New("price must be greater than 0")
+	ErrProductQuantityNegative = errors.New("quantity must be greater than or equal to 0")
 )
 
 type ProductService struct {
@@ -24,16 +24,16 @@ func NewProductService(repo *repositories.ProductRepository) *ProductService {
 
 func validate(name string, price float64, qty int) error {
 	if name == "" {
-		return ErrNameRequired
+		return ErrProductNameRequired
 	}
 	if len(name) < 3 {
-		return ErrNameTooShort
+		return ErrProductNameTooShort
 	}
 	if price <= 0 {
-		return ErrPriceRequired
+		return ErrProductPriceRequired
 	}
 	if qty < 0 {
-		return ErrQuantityNegative
+		return ErrProductQuantityNegative
 	}
 	return nil
 }
@@ -55,7 +55,7 @@ func (s *ProductService) GetByID(id int64) (*models.Product, error) {
 		return nil, err
 	}
 	if p == nil {
-		return nil, ErrNotFound
+		return nil, ErrProductNotFound
 	}
 	return p, nil
 }
@@ -69,7 +69,7 @@ func (s *ProductService) Update(id int64, inp models.UpdateProductInput) (*model
 		return nil, err
 	}
 	if p == nil {
-		return nil, ErrNotFound
+		return nil, ErrProductNotFound
 	}
 	return p, nil
 }
@@ -80,7 +80,7 @@ func (s *ProductService) Delete(id int64) error {
 		return err
 	}
 	if !ok {
-		return ErrNotFound
+		return ErrProductNotFound
 	}
 	return nil
 }

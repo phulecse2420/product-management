@@ -26,12 +26,12 @@ func Load() (*Config, error) {
 
 func (c *Config) Log() {
 	log.Println("Configuration:")
-	log.Printf("  DB Host:     %s", c.DBHost)
-	log.Printf("  DB Port:     %s", c.DBPort)
-	log.Printf("  DB User:     %s", c.DBUser)
+	log.Printf("  DB Host    : %s", c.DBHost)
+	log.Printf("  DB Port    : %s", c.DBPort)
+	log.Printf("  DB User    : %s", c.DBUser)
 	log.Printf("  DB Password: %s", "***")
-	log.Printf("  DB Name:     %s", c.DBName)
-	log.Printf("  App Port:    %s", c.Port)
+	log.Printf("  DB Name    : %s", c.DBName)
+	log.Printf("  App Port   : %s", c.Port)
 }
 
 func (c *Config) DSN() string {

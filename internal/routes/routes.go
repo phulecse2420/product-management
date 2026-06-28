@@ -6,10 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Register(r *gin.Engine, h *handlers.ProductHandler) {
-	r.POST("/products", h.Create)
-	r.GET("/products", h.List)
-	r.GET("/products/:id", h.GetByID)
-	r.PUT("/products/:id", h.Update)
-	r.DELETE("/products/:id", h.Delete)
+func Register(r *gin.Engine, handlers ...handlers.Registerable) {
+	for _, h := range handlers {
+		h.RegisterRoutes(r)
+	}
 }
