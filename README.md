@@ -76,7 +76,7 @@ This will:
 - Start a PostgreSQL container (`product_management_db`) on port `5432`
 - Build and start the API container on port `8080`
 - The API waits for the database to pass its health check before starting
-### 4. Run database migration
+### 4. Run database migration (auto run by docker compose)
 
 In a separate terminal, after the containers are up:
 
